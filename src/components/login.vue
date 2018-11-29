@@ -3,12 +3,18 @@
 	<div class="login container-fluid">
 
 		<div class="hd navbar-header row">
-			<img class="col-md-2" height="25px" width="35px" src="../../static/svg/account-filling.svg"/>
-			<span class="header col-md-2">LOGIN</span>
+			<img height="25px" width="35px" src="../../static/svg/account-filling.svg"/>
+			<span class="header">LOGIN</span>
 		</div>
 
 		<div class="cnt">
-			<form>
+
+			<ul class="nav nav-tabs head-tabs">
+			 <li role="presentation" v-bind:class="{ activeTab: presentTab == 'login' }" v-on:click="alterTab('login')"><a>Login</a></li>
+			 <li role="presentation" v-bind:class="{ activeTab: presentTab == 'register' }" v-on:click="alterTab('register')""><a>Register</a></li>
+			</ul>
+
+			<form id="login-tab" v-if="presentTab == 'login' ">
 				<div class="input form-group">
 					<label for="input-id">
 						<img class="left-float" height="18" width="35" src="../../static/svg/account.svg"/>
@@ -29,6 +35,29 @@
 					</label>
 				</div>
 				<button type="button" class=" btn btn-login" v-on:click="login()">Login</button>
+
+			</form>
+
+			<form id="register-tab" v-if="presentTab == 'register' ">
+				<div class="input form-group">
+					<label for="input-id">
+						<img class="left-float" height="18" width="35" src="../../static/svg/account.svg"/>
+					</label>
+					<input type="text" class="form-control" placeholder="ID" v-model="username">
+				</div>
+				<div class="input form-group">
+					<label for="input-pw">
+						<img class="left-float" height="18" width="35" src="../../static/svg/password.svg"/>
+					</label>
+					<input type="password" class="form-control" placeholder="Password" v-model="password">
+				</div><div class="input form-group">
+					<label for="input-pw">
+						<img class="left-float" height="18" width="35" src="../../static/svg/password.svg"/>
+					</label>
+					<input type="password" class="form-control" placeholder="Repeat Password" v-model="password">
+				</div>
+
+				<button type="button" class=" btn btn-login" v-on:click="register()">Register</button>
 			</form>
 		</div>
 		<div class="ft" >
@@ -40,13 +69,15 @@
 <script>
 import api from '../api.js'
 import router from '../router'
+import store from '../store'
 export default {
 	name: 'Login',
 	data: function () {
 		return {
 			username: '',
 			password: '',
-			willStore: false
+			willStore: false,
+			presentTab: 'login'
 		}
 	},
 	methods: {
@@ -57,7 +88,6 @@ export default {
 					password: this.password,
 					willStore: this.willStore
 				}
-				console.log(opt)
 				api.doLogin(opt).then(({
 					data
 				}) => {
@@ -67,9 +97,8 @@ export default {
 							token: data.token,
 							username: this.username
 						}
-						//store.dispatch('storeToken', JSON.stringify(user))
-						//this.$router.push(data.path)
-						this.$router.push('/user')
+						store.dispatch('storeToken', JSON.stringify(user))
+						this.$router.push(data.path)
 					} else {
 						alert(data.message)
 					}
@@ -77,6 +106,12 @@ export default {
 			} else {
 				alert('Fill the blanks please.')
 			}
+		},
+		register: function () {
+
+		},
+		alterTab: function (routes) {
+			this.presentTab = routes
 		}
 	}
 }
@@ -133,20 +168,33 @@ label > img {
 .login {
 	display: flex;
 	flex-direction: column;
-	width: 70%;
+	width: 60%;
 	color: #505050;
 	height: 100%;
 }
 
-.header {
+.hd {
 	font-size: 22px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
 }
 
 .cnt {
 	padding: 40px;
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
 	height: 500px;
+}
+
+.nav-tabs > li > a {
+	color: #505050;
+}
+
+.activeTab {
+	border-bottom: 2px solid #0EA8A3;
 }
 
 .input {

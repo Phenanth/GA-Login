@@ -5,8 +5,8 @@ const mysql = require('mysql');
 const connection = mysql.createConnection({
 	host: 'localhost',
 	// user: 'departmentAdmin',
-	password: ''
-	// database: 'departmentinfo'
+	password: '',
+	database: 'login'
 });
 
 console.log('Database connected.');
