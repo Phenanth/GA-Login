@@ -46,19 +46,18 @@ export default {
 		return {
 			username: '',
 			password: '',
-			role: '',
 			willStore: false
 		}
 	},
 	methods: {
 		login: function () {
-			if (this.username != '' && this.password != '' && this.role != '') {
+			if (this.username != '' && this.password != '') {
 				let opt = {
 					username: this.username,
 					password: this.password,
-					role: this.role,
 					willStore: this.willStore
 				}
+				console.log(opt)
 				api.doLogin(opt).then(({
 					data
 				}) => {
@@ -66,11 +65,11 @@ export default {
 						// Authentificated role will be transfered from the server, this is just the test version.
 						let user = {
 							token: data.token,
-							username: this.username,
-							role: this.role
+							username: this.username
 						}
-						store.dispatch('storeToken', JSON.stringify(user))
-						this.$router.push(data.path)
+						//store.dispatch('storeToken', JSON.stringify(user))
+						//this.$router.push(data.path)
+						this.$router.push('/user')
 					} else {
 						alert(data.message)
 					}
@@ -78,9 +77,6 @@ export default {
 			} else {
 				alert('Fill the blanks please.')
 			}
-		},
-		goBack: function () {
-			router.push('/')
 		}
 	}
 }
