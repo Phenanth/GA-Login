@@ -19,37 +19,51 @@ const Login = (req, res) => {
 		validTime = '168h';
 	}
 	
+	console.log(req.body);
+
 	db.query(queryString, function(error, results, fields) {
+
 		if (error) {
 			console.log(error);
 		}
-		// 如果有匹配的用户
-		if (results[0]) {
-			// 密码正确
-			if (req.body.password == results[0].solution) {
-				console.log('Operation: Login, State: 200');
+		
+		if (results) {
+			// 防止code: 'ER_NOT_SUPPORTED_AUTH_MODE'类型错误
+			if (!results[0]) {
+				// 用户不存在
+				console.log('Operation: Login, State: 404, Message: User not existed.');
 				res.json({
-					info: 200,
-					success: true,
-					path: '/user',
-					token: createToken(req.body.username, validTime)
-				});	
-			} else {
-				// 密码错误
-				console.log('Operation: Login, State: 304, Message: Wrong password.');
-				res.json({
-					info: 304,
+					info: 404,
 					success: false,
-					message: 'Wrong password.'
+					message: 'User not exists.'
 				});
+			} else {
+				// 如果有匹配的用户
+				if (req.body.password == results[0].solution) {
+					// 密码正确
+					console.log('Operation: Login, State: 200');
+					res.json({
+						info: 200,
+						success: true,
+						path: '/user',
+						token: createToken(req.body.username, validTime)
+					});	
+				} else {
+					// 密码错误
+					console.log('Operation: Login, State: 304, Message: Wrong password.');
+					res.json({
+						info: 304,
+						success: false,
+						message: 'Wrong password.'
+					});
+				}
 			}
 		} else {
-			// 用户不存在
-			console.log('Operation: Login, State: 404, Message: User not existed.');
+			console.log('Operation: Login, State: 504, Message: Unknown DB Fault.');
 			res.json({
-				info: 404,
+				info: 504,
 				success: false,
-				message: 'User not exists.'
+				message: 'Unknown DB Fault.'
 			});
 		}
 	});

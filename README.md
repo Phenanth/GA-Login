@@ -35,3 +35,13 @@
 - 页面设计
 - 数据库表设计
 
+### 12.05
+
+目标任务：
+- 无localStorage的登录
+- 带localStorage的登录
+	+ vuex的设计
+	+ 路由阻挡
+
+完成内容：
+- 无localStorage的登录
