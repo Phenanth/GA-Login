@@ -7,11 +7,7 @@ const state = {
 
 const getters = {
 	showTokenState: function (state) {
-		if (state.token) {
-			return state.token
-		} else {
-			return localStorage.getItem('token')
-		}
+		return localStorage.getItem('token')
 	}
 }
 

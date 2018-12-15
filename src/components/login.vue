@@ -5,6 +5,11 @@
 		<div class="hd navbar-header row">
 			<img height="25px" width="35px" src="../../static/svg/account-filling.svg"/>
 			<span class="header">LOGIN</span>
+			<div class="btn btn-goBack col-md-offset-11" v-on:click="goTo('/')">
+				<div class="fade-enter-active">
+					<img height="25" width="35" src="../../static/svg/back.svg"/>
+				</div>
+			</div>
 		</div>
 
 		<div class="cnt">
@@ -99,6 +104,7 @@ export default {
 						}
 						store.dispatch('storeToken', JSON.stringify(user))
 						this.$router.push(data.path)
+						this.$router.go(0)
 					} else {
 						alert(data.message)
 					}
@@ -112,6 +118,9 @@ export default {
 		},
 		alterTab: function (routes) {
 			this.presentTab = routes
+		},
+		goTo: function (path) {
+			this.$router.push(path)
 		}
 	}
 }
@@ -130,6 +139,7 @@ img:hover {
 h1 {
 	display: inline-block;
 }
+
 
 .login {
 	display: flex;
@@ -155,6 +165,7 @@ h1 {
 html, body {
 	min-width: 992px;
 	margin: 0px;
+	background-color: white;
 }
 
 input[type="radio"], input[type="checkbox"] {

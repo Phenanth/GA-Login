@@ -1,7 +1,50 @@
+<!DOCTYPE html>
+<template>
+<div>
+	<div class="top">
+		<h3>Information</h3>
+		<img src="../assets/logout.png">
+		<input type="button" value="Exit" v-on:click="doLogout()">
+	</div>
+	<div class="main">
+		<div class="label"><h4>XXXXXX</h4><div class="arrow-left"></div></div>
+		<div class="info">
+			<section class="userInfo">
+				<img src="../assets/pic.jpeg" alt="个人照片">
+				<ul>
+					<li>username:&nbsp;</li>
+					<li>sex:&nbsp;</li>
+					<li>XXX:&nbsp;</li>
+					<li>XXX:&nbsp;</li>
+					<li>XXX:&nbsp;</li>
+					<li>XXX:&nbsp;</li>
+				</ul>
+			</section>
+		</div>
+	</div>
+</div>
+</template>
+<script>
+import store from '../store/index.js'
+export default{
+	name: 'Userinfo',
+	methods: {
+		goTo: function (path) {
+			this.$router.push(path)
+		},
+    doLogout: function () {
+      store.dispatch('logout')
+      this.$router.push('/')
+      this.$router.go(0)
+    }
+	}
+}
+</script>
+<style>
 body{
   width: 100%;
   height: 100%;
-  background-color: #0EA8A3; 
+  background-color: white; 
 }
 .top{
   background-color: black;
@@ -90,7 +133,7 @@ body{
   font-size: 20px;
   line-height: 45px;
 }
-img{
+section > img{
   margin-top: 0px;
   border: 1px solid gray;
   height: 200px;
@@ -107,3 +150,5 @@ img{
 .userInfo ul li{
   text-align: right;
 }
+
+</style>

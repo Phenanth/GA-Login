@@ -45,7 +45,7 @@ const Login = (req, res) => {
 					res.json({
 						info: 200,
 						success: true,
-						path: '/user',
+						path: '/userinfo',
 						token: createToken(req.body.username, validTime)
 					});	
 				} else {
