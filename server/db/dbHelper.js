@@ -69,9 +69,69 @@ const Login = (req, res) => {
 	});
 
 };
+/*Register*/
+const Register = (req, res) => {
+
+	let validTime = '10s';
+	let queryString = {
+		sql: 'SELECT user_id FROM user WHERE user_id=?',
+		values: [req.body.username],
+		timeout: 40000
+	};
+	let queryStringInsert = {
+		sql: 'INSERT INTO user (`user_id`, `user_password`) VALUES (?)',
+		values: [
+			[req.body.username, req.body.password]
+		],
+		timeout: 40000
+	};
+	
+	console.log(req.body);
+
+	db.query(queryString, function(error, results, fields) {
+
+		if (error) {
+			console.log(error);
+		}
+		
+		if (results) {
+			// 防止code: 'ER_NOT_SUPPORTED_AUTH_MODE'类型错误
+			if (results[0]) {
+				// 用户已注册
+				console.log('Operation: Register, State: 404, Message: User already exists.');
+				res.json({
+					info: 404,
+					success: false,
+					message: 'The user you were trying to create already exists.'
+				});
+			} else {
+				// 如果没有被注册将相关信息插入数据库
+				db.query(queryStringInsert, function(error, results, fields) {
+					if (error) {
+						console.log(error);
+					}
+					res.json({
+						info: 200,
+						success: true
+					});
+				});
+			}
+		} else {
+			console.log('Operation: Register, State: 504, Message: Unknown DB Fault.');
+			res.json({
+				info: 504,
+				success: false,
+				message: 'Unknown DB Fault.'
+			});
+		}
+	});
+
+};
 
 module.exports = (router) => {
 
 	router.post('/login', Login);
+
+	router.post('/register', Register);
 
 }

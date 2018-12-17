@@ -59,7 +59,7 @@
 					<label for="input-pw">
 						<img class="left-float" height="18" width="35" src="../../static/svg/password.svg"/>
 					</label>
-					<input type="password" class="form-control" placeholder="Repeat Password" v-model="password">
+					<input type="password" class="form-control" placeholder="Repeat Password" v-model="vpassword">
 				</div>
 
 				<button type="button" class=" btn btn-login" v-on:click="register()">Register</button>
@@ -81,6 +81,7 @@ export default {
 		return {
 			username: '',
 			password: '',
+			vpassword:'',
 			willStore: false,
 			presentTab: 'login'
 		}
@@ -114,7 +115,37 @@ export default {
 			}
 		},
 		register: function () {
-
+			//添加
+			if (this.username != '' && this.password != '' && this.vpassword != '') {
+				if (this.password == this.vpassword){
+					let opt = {
+						username: this.username,
+						password: this.password,
+						vpassword: this.vpassword,
+					}
+					api.doRegister(opt).then(({
+						data
+					}) => {
+						if (data.info == 200) {
+							// Authentificated role will be transfered from the server, this is just the test version.
+							let user = {
+								token: data.token,
+								username: this.username
+							}
+							alert('Register Successed.')
+							this.alterTab('login')
+							this.username = ''
+							this.password = ''
+						} else {
+							alert(data.message)
+						}
+					})
+				}else {
+					alert('Repeat the right password please.')
+				}
+			}else {
+				alert('Fill the blanks please.')
+			}
 		},
 		alterTab: function (routes) {
 			this.presentTab = routes

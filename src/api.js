@@ -29,6 +29,11 @@ export default {
 	
 	doLogin ( data ) {
 		return instance.post('/api/login', data)
+	},
+
+	doRegister ( data ) {
+		return instance.post('/api/register', data)
 	}
+
 
 }
