@@ -33,7 +33,10 @@ export default {
 
 	doRegister ( data ) {
 		return instance.post('/api/register', data)
-	}
+	},
 
+	getData ( data ) {
+		return instance.post('/api/getUserData', data)
+	}
 
 }

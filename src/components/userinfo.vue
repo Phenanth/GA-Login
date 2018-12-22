@@ -12,12 +12,8 @@
 			<section class="userInfo">
 				<img src="../assets/pic.jpeg" alt="个人照片">
 				<ul>
-					<li>username:&nbsp;</li>
-					<li>sex:&nbsp;</li>
-					<li>XXX:&nbsp;</li>
-					<li>XXX:&nbsp;</li>
-					<li>XXX:&nbsp;</li>
-					<li>XXX:&nbsp;</li>
+					<li>username: {{ userdata.user_id }}</li>
+					<li>sex: {{ userdata.user_sex }}</li>
 				</ul>
 			</section>
 		</div>
@@ -28,6 +24,14 @@
 import store from '../store/index.js'
 export default{
 	name: 'Userinfo',
+  data: function () {
+    return {
+      userdata: {
+        user_id: '',
+        user_sex: ''
+      }
+    }
+  },
 	methods: {
 		goTo: function (path) {
 			this.$router.push(path)
@@ -37,7 +41,23 @@ export default{
       this.$router.push('/')
       this.$router.go(0)
     }
-	}
+	},
+  mounted: function () {
+    let opt = {
+      username: JSON.parse(store.getters.showTokenState).username
+    }
+    api.getData(opt).then(({
+      data
+    }) => {
+      if (data.info == 200) {
+        this.userdata.user_name = data.user_name
+        this.userdata.user_sex = data.user_sex
+      } else {
+        alert(data.message)
+        logout()
+      }
+    })
+  }
 }
 </script>
 <style>

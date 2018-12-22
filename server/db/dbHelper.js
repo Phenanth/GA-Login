@@ -143,10 +143,36 @@ const Register = (req, res) => {
 
 };
 
+const GetUserData = (req, res) => {
+	let queryString = {
+		sql: 'SELECT user_id, user_sex FROM user WHERE user_id=?',
+		values: [req.body.username],
+		timeout: 40000
+	};
+	db.query(queryString, function(error, results, fields) {
+		if (error) {
+			console.log(error)
+		}
+
+		if (results) {
+			if (results[0]) {
+				res.json({
+					info: 200,
+					success: true,
+					user_id: results[0].user_id,
+					user_sex: results[0].user_sex
+				});
+			}
+		}
+	});
+};
+
 module.exports = (router) => {
 
 	router.post('/login', Login);
 
 	router.post('/register', Register);
+
+	router.post('/getUserData', GetUserData);
 
 }
