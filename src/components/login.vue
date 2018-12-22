@@ -136,6 +136,7 @@ export default {
 							this.alterTab('login')
 							this.username = ''
 							this.password = ''
+							this.vpassword = ''
 						} else {
 							alert(data.message)
 						}

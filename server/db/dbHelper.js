@@ -6,7 +6,12 @@ const db = require('./connect.js');
 const createToken = require('../middleware/createToken.js');
 const checkToken = require('../middleware/checkToken.js');
 
+var salt = "abcdefghijklmnopqrstuvwxyz";
+var txt = "123456";
+
 const Login = (req, res) => {
+	var crypto = require('crypto');
+	var md5 = crypto.createHash('md5');
 
 	let validTime = '10s';
 	let queryString = {
@@ -20,6 +25,9 @@ const Login = (req, res) => {
 	}
 	
 	console.log(req.body);
+
+	md5.update(req.body.password);
+	md5 = crypto.createHash('md5');
 
 	db.query(queryString, function(error, results, fields) {
 
@@ -39,7 +47,8 @@ const Login = (req, res) => {
 				});
 			} else {
 				// 如果有匹配的用户
-				if (req.body.password == results[0].solution) {
+				md5.update(req.body.password + salt);
+				if (md5.digest('hex') == results[0].solution) {
 					// 密码正确
 					console.log('Operation: Login, State: 200');
 					res.json({
@@ -71,6 +80,12 @@ const Login = (req, res) => {
 };
 /*Register*/
 const Register = (req, res) => {
+	var crypto = require('crypto');
+	var md5 = crypto.createHash('md5');
+	md5.update(req.body.password);
+	md5 = crypto.createHash('md5');
+	md5.update(req.body.password + salt);
+	req.body.password = md5.digest('hex');
 
 	let validTime = '10s';
 	let queryString = {
