@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <template>
-<div>
-	<div class="top">
-		<h3>Information</h3>
-		<img src="../assets/logout.png">
-		<input type="button" value="Exit" v-on:click="doLogout()">
-	</div>
-	<div class="main">
-		<div class="label"><h4>XXXXXX</h4><div class="arrow-left"></div></div>
-		<div class="info">
-			<section class="userInfo">
-				<img src="../assets/pic.jpeg" alt="个人照片">
-				<ul>
-					<li>username: {{ userdata.user_id }}</li>
-					<li>sex: {{ userdata.user_sex }}</li>
-				</ul>
-			</section>
-		</div>
-	</div>
+<div class="userinfo">
+
+  <div class="main">
+    <!-- <div class="label"><h4>XXXXXX</h4><div class="arrow-left"></div></div> -->
+    <div class="info">
+      <img src="../assets/pic.jpeg" alt="个人照片">
+      <div>username: {{ userdata.user_id }}</div>
+      <div>sex: {{ userdata.user_sex }}</div>
+      <div>secret: {{ userdata.user_secret }}</div>
+    </div>
+
+    <div class="verify">
+      
+      <button class="btn btn-default" v-on:click="goTo('/user/verify-first')">进行二次认证</button>
+
+    </div>
+  </div>
+
 </div>
 </template>
 <script>
+import api from '../api.js'
 import store from '../store/index.js'
 export default{
 	name: 'Userinfo',
@@ -28,7 +29,8 @@ export default{
     return {
       userdata: {
         user_id: '',
-        user_sex: ''
+        user_sex: '',
+        user_secret: ''
       }
     }
   },
@@ -42,6 +44,13 @@ export default{
       this.$router.go(0)
     }
 	},
+  computed: {
+    isVerified: function () {
+      if (this.user_secret) {
+
+      }
+    }
+  },
   mounted: function () {
     let opt = {
       username: JSON.parse(store.getters.showTokenState).username
@@ -50,8 +59,10 @@ export default{
       data
     }) => {
       if (data.info == 200) {
-        this.userdata.user_name = data.user_name
+        console.log(data)
+        this.userdata.user_id = data.user_id
         this.userdata.user_sex = data.user_sex
+        this.userdata.user_secret = data.user_secret
       } else {
         alert(data.message)
         logout()
@@ -61,12 +72,14 @@ export default{
 }
 </script>
 <style>
-body{
+
+.userinfo {
   width: 100%;
   height: 100%;
   background-color: white; 
 }
-.top{
+
+.top {
   background-color: black;
   height: 55px;
   position: fixed;
@@ -74,14 +87,16 @@ body{
   left: 0px;
   width: 100%;
 }
-.top h3{
+
+.top h3 {
   float: left;
   margin-top: 10px;
   margin-left: 30px;
   color: #0EA8A3;
   font-size: 25px;
 }
-.top img{
+
+.top img {
   margin-right: 60px;
   position: absolute;
   left: 91%;
@@ -90,7 +105,8 @@ body{
   width: 25px;
   border: 0px;
 }
-.top input{
+
+.top input {
   float: right;
   color: #0EA8A3;
   width: 50px;
@@ -103,19 +119,21 @@ body{
   margin-right: 30px;
   cursor:pointer;
 }
-.top input:hover{
+.top input:hover {
   color: white;
 }
-.main{
-  top: 0px;
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin-top: 55px;
-  position: fixed;
-  left: 5%;
   height: 100%;
-  width: 90%;
+  width: 100%;
   background-color: white;
 }
-.label{
+/* .label{
   position: absolute;
   top: 15px;
   font-size: 20px;
@@ -129,7 +147,7 @@ body{
   font-weight: 450;
   margin-top: 10px;
   margin-left: 30px;
-}
+} 
 .arrow-left {
   position: absolute;
   left: 135px;
@@ -143,31 +161,35 @@ body{
   border-right-style: solid;
   border-top-color: transparent;
   border-bottom-color: transparent;
-}
-.userInfo{
-  float: right;
-  position: absolute;
-  top: 15%;
-  left: 30%;
+} */
+
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: left;
   font-size: 20px;
-  line-height: 45px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
-section > img{
+.info > img {
   margin-top: 0px;
   border: 1px solid gray;
   height: 200px;
   width: 180px;
 }
-.userInfo ul{
+.info ul{
   list-style: none;
   float: right;
   font-size: 30px;
   font-weight: 400;
   line-height: 50px;
-  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
-.userInfo ul li{
+.info ul li{
   text-align: right;
 }
 

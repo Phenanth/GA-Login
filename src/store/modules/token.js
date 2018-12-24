@@ -2,12 +2,16 @@
 import api from '../../api.js'
 
 const state = {
-	token: null
+	token: null,
+	isVerified: null
 }
 
 const getters = {
 	showTokenState: function (state) {
 		return localStorage.getItem('token')
+	},
+	showVerifyState: function (state) {
+		return localStorage.getItem('verify')
 	}
 }
 
@@ -17,6 +21,12 @@ const actions = {
 	},
 	logout: function ({ commit }) {
 		commit('LOGOUT')
+	},
+	storeVerify: function ({ commit }, data) {
+		commit('STOREVERIFY', data)
+	},
+	removeVerify: function ({ commit }, data) {
+		commit('REMOVEVERIFY', data)
 	}
 }
 
@@ -28,6 +38,13 @@ const mutations = {
 	LOGOUT: function (state) {
 		localStorage.removeItem('token')
 		state.token = null
+	},
+	STOREVERIFY: function (state, data) {
+		localStorage.setItem('verify', data)
+	},
+	REMOVEVERIFY: function (state) {
+		localStorage.removeItem('verify')
+		state.isVerified = null
 	}
 }
 

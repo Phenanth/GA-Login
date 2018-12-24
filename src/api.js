@@ -37,6 +37,10 @@ export default {
 
 	getData ( data ) {
 		return instance.post('/api/getUserData', data)
+	},
+
+	sendVerify () {
+		return instance.get('/api/sendVerify')
 	}
 
 }
