@@ -11,10 +11,11 @@
       <div>secret: {{ userdata.user_secret }}</div>
     </div>
 
-    <div class="verify">
-      
+    <div v-if="isVerified">
+      <h4>您已完成双因子认证。</h4>
+    </div>
+    <div class="verify" v-else>
       <button class="btn btn-default" v-on:click="goTo('/user/verify-first')">进行二次认证</button>
-
     </div>
   </div>
 
@@ -46,8 +47,10 @@ export default{
 	},
   computed: {
     isVerified: function () {
-      if (this.user_secret) {
-
+      if (localStorage.getItem('verify')) {
+        return true
+      } else {
+        return false
       }
     }
   },

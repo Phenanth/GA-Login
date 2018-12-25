@@ -6,13 +6,13 @@ const db = require('./connect.js');
 const createToken = require('../middleware/createToken.js');
 const checkToken = require('../middleware/checkToken.js');
 
+var crypto = require('crypto');
+
 var speakeasy = require('speakeasy')
 var QRCode = require('qrcode')
 
 var salt = "abcdefghijklmnopqrstuvwxyz";
 var txt = "123456";
-
-var secret = '';
 
 const Login = (req, res) => {
 	var crypto = require('crypto');
@@ -85,7 +85,7 @@ const Login = (req, res) => {
 };
 /*Register*/
 const Register = (req, res) => {
-	var crypto = require('crypto');
+
 	var md5 = crypto.createHash('md5');
 	md5.update(req.body.password);
 	md5 = crypto.createHash('md5');
@@ -178,37 +178,88 @@ const GetUserData = (req, res) => {
 
 const SendVerify = (req, res) => {
 
-	secret = speakeasy.generateSecret({length: 20});
-
-	console.log(secret.base32);
-
-	QRCode.toDataURL(secret.otpauth_url, function (err, image_data) {
-		
-		if (err) {
-			console.log(err)
-		}
-		
-		res.json({
-			image: image_data
-		});
-
-	});
-	
-};
-
-const VerifyFirst = (req, res) => {
+	var secret = speakeasy.generateSecret({length: 20});
 
 	let queryString = {
 		sql: 'UPDATE user SET user_secret=? WHERE user_id=?',
 		values: [
-			[secret],
+			[secret.base32],
 			[req.body.username]
 		],
 		timeout: 40000
 	};
 
-	req.json({
-		message: 'testing.'
+	db.query(queryString, function (error, results, fields) {
+
+		if (error) {
+			console.log(error)
+		}
+
+		QRCode.toDataURL(secret.otpauth_url, function (err, image_data) {
+		
+			if (err) {
+				console.log(err)
+			}
+			
+			res.json({
+				image: image_data
+			});
+
+		});
+
+	})
+
+};
+
+const VerifyFirst = (req, res) => {
+
+	var verifyCode = req.body.verifyCode
+
+	let queryString = {
+		sql: 'SELECT user_secret FROM user WHERE user_id=?',
+		values: [req.body.username],
+		timeout: 40000
+	}
+	
+	db.query(queryString, function (error, results, fields) {
+
+		if (error) {
+			console.log(error)
+		}
+
+		if (results) {
+			if (results[0]) {
+				var secret = results[0].user_secret
+
+				var token = speakeasy.totp({
+					secret: secret,
+					encoding: 'base32'
+				});
+
+				if (verifyCode == token) {
+					console.log('Operation: First Verify, State: 200');
+					res.json({
+						info: 200,
+						success: true
+					});
+				} else {
+					console.log('Operation: First Verify, State: 304, Message: Wrong Verify Code.');
+					res.json({
+						info: 304,
+						success: false,
+						message: 'Wrong Verify Code.'
+					});
+				}
+			}
+		} else {
+			console.log('Operation: First Verify, State: 504, Message: Unknown DB Fault.');
+			res.json({
+				info: 504,
+				success: false,
+				message: 'Unknown DB Fault.'
+			});
+		}
+
 	});
 
 };
@@ -221,7 +272,7 @@ module.exports = (router) => {
 
 	router.post('/getUserData', GetUserData);
 
-	router.get('/sendVerify', SendVerify);
+	router.post('/sendVerify', SendVerify);
 
 	router.post('/verify-first', VerifyFirst)
 

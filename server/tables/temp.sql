@@ -7,3 +7,5 @@ END;
 update user set user_sex = 'M';
 
 ALTER TABLE user ADD user_secret char(20) DEFAULT NULL;
+
+ alter table user modify column user_secret varchar(40);
