@@ -37,17 +37,20 @@ export default {
 			if (this.verifyCode != '') {
 				let opt = {
 					username: JSON.parse(localStorage.getItem('token')).username,
-					verifyCode: this.verifyCode
+					verifyCode: this.verifyCode,
+					first: true
 				}
-				api.verifyFirst(opt).then(({
+				api.verify(opt).then(({
 					data
 				}) => {
 					if (data.info == 200) {
-						let verify = {
-							username: JSON.parse(localStorage.getItem('token')).username
+						let user = {
+							username: JSON.parse(localStorage.getItem('token')).username,
+							token: JSON.parse(localStorage.getItem('token')).token,
+							verify: true
 						}
-						store.dispatch('storeVerify', JSON.stringify(verify))
-						this.$router.push('/user/userinfo')
+						store.dispatch('updateToken', JSON.stringify(user))
+						this.$router.go(0)
 					} else {
 						alert(data.message)
 					}

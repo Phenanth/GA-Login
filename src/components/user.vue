@@ -11,8 +11,16 @@
 </template>
 
 <script>
+import store from '../store'
 export default {
-	name: 'User'
+	name: 'User',
+	methods: {
+	    doLogout: function () {
+	      store.dispatch('removeToken')
+	      this.$router.push('/')
+	      this.$router.go(0)
+	    }
+	}
 }
 </script>
 

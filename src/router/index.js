@@ -34,6 +34,24 @@ export default new Router({
       }
     },
     {
+      path: '/verify-login',
+      name: 'Verify-Login',
+      component: VerifyLogin,
+      beforeEnter: (to, from, next) => {
+        let token = JSON.parse(store.getters.showTokenState)
+        let needAuth = JSON.parse(store.getters.showAuthState)
+        if (needAuth) {
+          next()
+        } else {
+          if (token) {
+            next('/user/userinfo')
+          } else {
+            next('/login')
+          }
+        }
+      }
+    },
+    {
       path: '/user',
       name: 'User',
       component: User,
@@ -41,7 +59,15 @@ export default new Router({
         {
           path: 'verify-first',
           name: 'Verify-First',
-          component: VerifyFirst
+          component: VerifyFirst,
+          beforeEnter: (to, from, next) => {
+            let verify = JSON.parse(store.getters.showTokenState).verify
+            if (verify) {
+              next('/user/userinfo')
+            } else {
+              next()
+            }
+          }
         },
         {
           path: 'userinfo',
@@ -49,10 +75,15 @@ export default new Router({
           component: Userinfo,
           beforeEnter: (to, from, next) => {
             let token = JSON.parse(store.getters.showTokenState)
-            if (token) {
+            let needAuth = JSON.parse(store.getters.showAuthState)
+            if (token && !needAuth) {
               next()
             } else {
-              next('/login')
+              if (needAuth) {
+                next('/verify-login')
+              } else {
+                next('/login')
+              }
             }
           }
         }

@@ -1,24 +1,32 @@
 <!DOCTYPE html>
 <template>
 <div class="userinfo">
-
   <div class="main">
-    <!-- <div class="label"><h4>XXXXXX</h4><div class="arrow-left"></div></div> -->
     <div class="info">
       <img src="../assets/pic.jpeg" alt="个人照片">
-      <div>username: {{ userdata.user_id }}</div>
-      <div>sex: {{ userdata.user_sex }}</div>
-      <div>secret: {{ userdata.user_secret }}</div>
+      <div class="info-text">
+        <div><b>username:</b> {{ userdata.user_id }}</div>
+        <div><b>sex:</b> {{ userdata.user_sex }}</div>
+        <div v-if="isVerified">
+          <span class="label label-info">验证密钥</span>
+          <div>{{ userdata.user_secret }}</div>
+        </div>
+      </div>
+      
     </div>
-
     <div v-if="isVerified">
-      <h4>您已完成双因子认证。</h4>
+      <div class="alert alert-success" role="alert">
+        <a href="#" class="alert-link">您已成功地完成双因子认证，请重新登陆进行验证。</a>
+      </div>
+      <button class="btn btn-default" v-on:click="doRemove()">关闭双因子验证</button>
     </div>
     <div class="verify" v-else>
-      <button class="btn btn-default" v-on:click="goTo('/user/verify-first')">进行二次认证</button>
+      <div class="alert alert-warning" role="alert">
+        <a class="alert-link">您已经关闭了双因子验证，请确认Google Authenticator上相应的验证器也已删除。</a>
+      </div>
+      <button class="btn btn-default" v-on:click="goTo('/user/verify-first')">进行双因子认证</button>
     </div>
   </div>
-
 </div>
 </template>
 <script>
@@ -39,15 +47,30 @@ export default{
 		goTo: function (path) {
 			this.$router.push(path)
 		},
-    doLogout: function () {
-      store.dispatch('logout')
-      this.$router.push('/')
-      this.$router.go(0)
+    doRemove: function () {
+      let opt = {
+        username: JSON.parse(store.getters.showTokenState).username
+      }
+      api.removeVerify(opt).then(({
+        data
+      }) => {
+        if (data.info == 200) {
+          let user = {
+            username: JSON.parse(store.getters.showTokenState).username,
+            token: JSON.parse(store.getters.showTokenState).token,
+            verify: false
+          }
+          store.dispatch('updateToken', JSON.stringify(user))
+          this.$router.go(0)
+        } else {
+          alert(data.message)
+        }
+      })
     }
 	},
   computed: {
     isVerified: function () {
-      if (localStorage.getItem('verify')) {
+      if (this.userdata.user_secret) {
         return true
       } else {
         return false
@@ -62,7 +85,7 @@ export default{
       data
     }) => {
       if (data.info == 200) {
-        console.log(data)
+        // console.log(data)
         this.userdata.user_id = data.user_id
         this.userdata.user_sex = data.user_sex
         this.userdata.user_secret = data.user_secret
@@ -122,6 +145,7 @@ export default{
   margin-right: 30px;
   cursor:pointer;
 }
+
 .top input:hover {
   color: white;
 }
@@ -176,12 +200,14 @@ export default{
   margin-top: 30px;
   margin-bottom: 30px;
 }
+
 .info > img {
   margin-top: 0px;
   border: 1px solid gray;
   height: 200px;
   width: 180px;
 }
+
 .info ul{
   list-style: none;
   float: right;
@@ -192,8 +218,14 @@ export default{
   flex-direction: column;
   align-items: flex-start;
 }
+
 .info ul li{
   text-align: right;
 }
 
+.info-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 </style>

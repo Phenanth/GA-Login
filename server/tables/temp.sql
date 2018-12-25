@@ -6,6 +6,6 @@ END;
 
 update user set user_sex = 'M';
 
-ALTER TABLE user ADD user_secret char(20) DEFAULT NULL;
+ALTER TABLE user ADD user_secret varchar(40) DEFAULT NULL;
 
- alter table user modify column user_secret varchar(40);
+ALTER TABLE user ADD user_secret_temp varchar(40) DEFAULT NULL;

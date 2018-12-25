@@ -43,8 +43,12 @@ export default {
 		return instance.post('/api/sendVerify', data)
 	},
 
-	verifyFirst ( data ) {
-		return instance.post('/api/verify-first', data)
+	verify ( data ) {
+		return instance.post('/api/verify', data)
+	},
+
+	removeVerify ( data ) {
+		return instance.post('/api/removeverify', data)
 	}
 
 }

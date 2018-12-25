@@ -33,12 +33,12 @@
 					<input type="password" class="form-control" placeholder="Password" v-model="password">
 				</div>
 	
-				<div class="checkbox">
+				<!-- <div class="checkbox">
 					<label>
 						<input type="checkbox" value="true" v-model="willStore" class="demo-radio demo-radioInput">
 						<span class="demo-checkbox demo-radioInput"></span>Remember me in 7 days.
 					</label>
-				</div>
+				</div> -->
 				<button type="button" class=" btn btn-login" v-on:click="login()">Login</button>
 
 			</form>
@@ -101,9 +101,18 @@ export default {
 						// Authentificated role will be transfered from the server, this is just the test version.
 						let user = {
 							token: data.token,
-							username: this.username
+							username: this.username,
+							verify: data.user_secret
 						}
-						store.dispatch('storeToken', JSON.stringify(user))
+						store.dispatch('storeToken', JSON.stringify(user)) 
+						if (data.user_secret) {
+				          let auth = {
+				            username: JSON.parse(localStorage.getItem('token')).username
+				          }
+				          store.dispatch('setAuth', JSON.stringify(auth))
+				        } else {
+				        	store.dispatch('removeAuth')
+				        }
 						this.$router.push(data.path)
 						this.$router.go(0)
 					} else {

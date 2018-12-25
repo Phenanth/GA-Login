@@ -100,7 +100,19 @@
 - 后端：首次双因子验证的二维码生成、六位验证码验证的认证
 - vuex：验证完成后全局状态的更新
 
-待完成
+后续完成任务
 
-- 删除双因子认证
+- 修改数据库表：增加临时secret，仅用于首次验证过程中使用
+	为了避免验证到一半失败的情况，在通过验证后再储存为正式secret
+- 解除双因子认证
 - 双因子认证页面，路由访问的限制
+- 修改初次验证结束后token的更新，无需重新登陆
+- 添加部分提示视效
+
+注意需要修改数据库表：
+```SQL
+ALTER TABLE user ADD user_secret varchar(40) DEFAULT NULL;
+ALTER TABLE user ADD user_secret_temp varchar(40) DEFAULT NULL;
+```
+
+如果需要对各个页面的CSS进行修改，可以把`/GA-Login/src/router/index.js`中对应页面的`beforeEnter`路由守护的部分注释掉，就可以在没有达成进入条件时进入该页面了。

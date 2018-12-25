@@ -74,6 +74,7 @@
 	</div>
 </template>
 <script>
+import store from '../store'
 import router from '../router'
 export default {
 	name: 'home',
@@ -81,7 +82,10 @@ export default {
 		goTo: function (path) {
 			router.push(path)
 		}
-	}
+	}/*,
+	mounted: function () {
+		store.dispatch('removeToken')
+	}*/
 }
 </script>
 <style>

@@ -20,7 +20,7 @@ const Login = (req, res) => {
 
 	let validTime = '10s';
 	let queryString = {
-		sql: 'SELECT user_password AS solution FROM user WHERE user_id=?',
+		sql: 'SELECT user_password, user_secret FROM user WHERE user_id=?',
 		values: [req.body.username],
 		timeout: 40000
 	};
@@ -29,7 +29,7 @@ const Login = (req, res) => {
 		validTime = '168h';
 	}
 	
-	console.log(req.body);
+	// console.log(req.body);
 
 	md5.update(req.body.password);
 	md5 = crypto.createHash('md5');
@@ -53,13 +53,14 @@ const Login = (req, res) => {
 			} else {
 				// 如果有匹配的用户
 				md5.update(req.body.password + salt);
-				if (md5.digest('hex') == results[0].solution) {
+				if (md5.digest('hex') == results[0].user_password) {
 					// 密码正确
 					console.log('Operation: Login, State: 200');
 					res.json({
 						info: 200,
 						success: true,
 						path: '/user/userinfo',
+						user_secret: new Boolean(results[0].user_secret),
 						token: createToken(req.body.username, validTime)
 					});	
 				} else {
@@ -106,7 +107,7 @@ const Register = (req, res) => {
 		timeout: 40000
 	};
 	
-	console.log(req.body);
+	// console.log(req.body);
 
 	db.query(queryString, function(error, results, fields) {
 
@@ -181,7 +182,7 @@ const SendVerify = (req, res) => {
 	var secret = speakeasy.generateSecret({length: 20});
 
 	let queryString = {
-		sql: 'UPDATE user SET user_secret=? WHERE user_id=?',
+		sql: 'UPDATE user SET user_secret_temp=? WHERE user_id=?',
 		values: [
 			[secret.base32],
 			[req.body.username]
@@ -211,7 +212,7 @@ const SendVerify = (req, res) => {
 
 };
 
-const VerifyFirst = (req, res) => {
+const Verify = (req, res) => {
 
 	var verifyCode = req.body.verifyCode
 
@@ -219,6 +220,10 @@ const VerifyFirst = (req, res) => {
 		sql: 'SELECT user_secret FROM user WHERE user_id=?',
 		values: [req.body.username],
 		timeout: 40000
+	}
+
+	if (req.body.first) {
+		queryString.sql = 'SELECT user_secret_temp FROM user WHERE user_id=?'
 	}
 	
 	db.query(queryString, function (error, results, fields) {
@@ -229,21 +234,53 @@ const VerifyFirst = (req, res) => {
 
 		if (results) {
 			if (results[0]) {
-				var secret = results[0].user_secret
+				var secret = ''
+
+				if (req.body.first) {
+					secret = results[0].user_secret_temp
+				} else {
+					secret = results[0].user_secret
+				}
 
 				var token = speakeasy.totp({
 					secret: secret,
 					encoding: 'base32'
 				});
 
+				// console.log(secret)
+
 				if (verifyCode == token) {
-					console.log('Operation: First Verify, State: 200');
+					if (req.body.first) {
+						let queryString2 = {
+							sql: 'UPDATE user SET user_secret=? WHERE user_id=?',
+							values: [[secret], [req.body.username]],
+							timeout: 40000
+						};
+						db.query(queryString2, function (error, results, fields) {
+							if (error) {
+								console.log(error)
+							}
+						})
+						queryString2 = {
+							sql: 'UPDATE user SET user_secret_temp=null WHERE user_id=?',
+							values: [req.body.username],
+							timeout: 40000
+						};
+						db.query(queryString2, function (error, results, fields) {
+							if (error) {
+								console.log(error)
+							}
+						})
+						console.log('Operation: First Verify, State: 200');
+					} else {
+						console.log('Operation: Verify, State: 200');
+					}
 					res.json({
 						info: 200,
 						success: true
 					});
 				} else {
-					console.log('Operation: First Verify, State: 304, Message: Wrong Verify Code.');
+					console.log('Operation: Verify, State: 304, Message: Wrong Verify Code.');
 					res.json({
 						info: 304,
 						success: false,
@@ -252,7 +289,7 @@ const VerifyFirst = (req, res) => {
 				}
 			}
 		} else {
-			console.log('Operation: First Verify, State: 504, Message: Unknown DB Fault.');
+			console.log('Operation: Verify, State: 504, Message: Unknown DB Fault.');
 			res.json({
 				info: 504,
 				success: false,
@@ -264,6 +301,36 @@ const VerifyFirst = (req, res) => {
 
 };
 
+const RemoveVerify = (req, res) => {
+	let queryString = {
+		sql: 'UPDATE user SET user_secret=null WHERE user_id=?',
+		values: [req.body.username],
+		timeout: 40000
+	};
+
+	db.query(queryString, function(error, results, fields) {
+
+		if (error) {
+			console.log(error)
+		}
+
+		if (results) {
+			console.log('Operation: Remove Verify, State: 200');
+			res.json({
+				info: 200,
+				success: true
+			})
+		} else {
+			console.log('Operation: Remove Verify, State: 504, Message: Unknown DB Fault.');
+			res.json({
+				info: 504,
+				success: false,
+				message: 'Unknown DB Fault'
+			})
+		}
+	})
+}
+
 module.exports = (router) => {
 
 	router.post('/login', Login);
@@ -274,6 +341,8 @@ module.exports = (router) => {
 
 	router.post('/sendVerify', SendVerify);
 
-	router.post('/verify-first', VerifyFirst)
+	router.post('/verify', Verify);
+
+	router.post('/removeverify', RemoveVerify);
 
 }

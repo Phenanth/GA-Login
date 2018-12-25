@@ -3,15 +3,15 @@ import api from '../../api.js'
 
 const state = {
 	token: null,
-	isVerified: null
+	needAuth: null
 }
 
 const getters = {
 	showTokenState: function (state) {
 		return localStorage.getItem('token')
 	},
-	showVerifyState: function (state) {
-		return localStorage.getItem('verify')
+	showAuthState: function (state) {
+		return localStorage.getItem('auth')
 	}
 }
 
@@ -19,14 +19,18 @@ const actions = {
 	storeToken: function ({ commit }, data) {
 		commit('STORETOKEN', data)
 	},
-	logout: function ({ commit }) {
-		commit('LOGOUT')
+	removeToken: function ({ commit }) {
+		commit('REMOVETOKEN')
 	},
-	storeVerify: function ({ commit }, data) {
-		commit('STOREVERIFY', data)
+	updateToken: function ({ commit }, data) {
+		commit('REMOVETOKEN')
+		commit('STORETOKEN', data)
 	},
-	removeVerify: function ({ commit }, data) {
-		commit('REMOVEVERIFY', data)
+	setAuth: function ({ commit }, data) {
+		commit('SETAUTH', data)
+	},
+	removeAuth: function({ commit }) {
+		commit('REMOVEAUTH')
 	}
 }
 
@@ -35,16 +39,16 @@ const mutations = {
 		localStorage.setItem('token', data)
 		state.token = data
 	},
-	LOGOUT: function (state) {
+	REMOVETOKEN: function (state) {
 		localStorage.removeItem('token')
 		state.token = null
 	},
-	STOREVERIFY: function (state, data) {
-		localStorage.setItem('verify', data)
+	SETAUTH: function (state, data) {
+		localStorage.setItem('auth', data)
 	},
-	REMOVEVERIFY: function (state) {
-		localStorage.removeItem('verify')
-		state.isVerified = null
+	REMOVEAUTH: function(state) {
+		localStorage.removeItem('auth')
+		state.needAuth = null
 	}
 }
 
