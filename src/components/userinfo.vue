@@ -5,8 +5,8 @@
     <div class="info">
       <img src="../assets/pic.jpeg" alt="个人照片">
       <div class="info-text">
-        <div><b>username:</b> {{ userdata.user_id }}</div>
-        <div><b>sex:</b> {{ userdata.user_sex }}</div>
+        <div class="info-details"><b>username&nbsp; &nbsp;|&nbsp; &nbsp;</b> {{ userdata.user_id }}</div>
+        <div class="info-details"><b>sex&nbsp; &nbsp;|&nbsp; &nbsp;</b> {{ userdata.user_sex }}</div>
         <div v-if="isVerified">
           <span class="label label-info">验证密钥</span>
           <div>{{ userdata.user_secret }}</div>
@@ -100,9 +100,9 @@ export default{
 <style>
 
 .userinfo {
-  width: 100%;
-  height: 100%;
+ 
   background-color: white; 
+ 
 }
 
 .top {
@@ -197,15 +197,18 @@ export default{
   align-items: center;
   text-align: left;
   font-size: 20px;
-  margin-top: 30px;
+  margin-top: 70px;
   margin-bottom: 30px;
 }
 
 .info > img {
+  float:left;
   margin-top: 0px;
   border: 1px solid gray;
-  height: 200px;
-  width: 180px;
+  height: 150px;
+  width: 150px;
+  border-radius:75px;
+
 }
 
 .info ul{
@@ -227,5 +230,26 @@ export default{
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-top:30px;
 }
+.info-details {
+  margin:5px;
+}
+.info-text b {
+   font-weight:bold;
+}
+ .btn-default {
+  background-color: white ;
+  color:#0EA8A3;
+  border:2px solid #0EA8A3;
+  font-weight:bold;
+}
+.btn-default:hover {
+  background-color: white;
+  color:#0c8a86;
+  border:2px solid #0c8a86;
+  font-weight:bold;
+  cursor:pointer;
+}
+
 </style>

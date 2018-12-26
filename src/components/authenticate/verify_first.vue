@@ -79,10 +79,13 @@ export default {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	margin-top:150px;
 }
 	
 #verifyText {
+	margin-top:10px;
 	width: 200px;
+
 }
 /* 
 .form-group > label {
@@ -90,6 +93,7 @@ export default {
 } */
 
 .ctl-verify {
+	margin-top:10px;
 	width: 200px;
 	display: flex;
 	justify-content: space-between;

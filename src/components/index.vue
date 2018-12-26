@@ -12,14 +12,14 @@
 		</div>
 		<div class="jumbotron" id="jumbotron">
 			<h1>Features</h1>
-			<p>NodeJS, VueJS, Axios, Vue-Router, Vuex...</p>
+			<p>NodeJS  &emsp;VueJS &emsp;Axios &emsp;Vue-Router &emsp;Vuex</p>
 			<a class="btn btn-primary" href="/#features" role="button">Learn more</a>
 		</div>
 		<div class="features" id="features">
 			<div class="feature-item">
-				<h2>NodeJS and VueJS</h2>
+				<h2>NODEJS  &nbsp;and  &nbsp;VUEJS</h2>
 				<div class="row">
-					  <div class="col-xs-6 col-md-4">
+					  <div class="col-xs-6 col-md-5" id="NodeJS_Img">
 					    <a class="thumbnail" href="https://nodejs.org/en/" target="_blank">
 					      <img src="../assets/NodeJS.png" alt="">
 					    </a>
@@ -32,7 +32,7 @@
 				</div>
 			</div>
 			<div class="feature-item">
-				<h2>Axios</h2>
+				<h2>AXIOS</h2>
 				<div class="row">
 					  <div class="col-xs-6 col-md-5">
 					    <a class="thumbnail">
@@ -47,9 +47,9 @@
 				</div>
 			</div>
 			<div class="feature-item">
-				<h2>Vue-Router</h2>
+				<h2>VUE-ROUTER</h2>
 				<div class="row">
-					  <div class="col-xs-6 col-md-6">
+					  <div class="col-xs-6 col-md-7">
 					    <a class="thumbnail" href="https://router.vuejs.org/" target="_blank">
 					      <img src="../assets/3.png">
 					    </a>
@@ -57,9 +57,9 @@
 				</div>
 			</div>
 			<div class="feature-item">
-				<h2>Vuex</h2>
+				<h2>VUEX</h2>
 				<div class="row">
-					  <div class="col-xs-6 col-md-6">
+					  <div class="col-xs-6 col-md-7">
 					    <a class="thumbnail" href="https://vuex.vuejs.org/"" target="_blank">
 					      <img src="../assets/4.png">
 					    </a>
@@ -98,12 +98,17 @@ html, body {
 }
 
 img {
-	margin-right: 20px;
-	margin-left: 20px;
+	position:relative;
+	left:0%;
+	
 }
 
 img:hover {
 	cursor: pointer;
+}
+.header{
+	position:relative;
+	left:-18%;
 }
 
 h1 {
@@ -134,9 +139,11 @@ h1 {
 	padding-bottom: 10px;
 	padding-top: 20px;
 	width: 100%;
-	height: 85px;
+	height: 80px;
 	position: fixed;
 	top: 3%;
+	z-index:100;
+	box-shadow:0px 0px  5px 3px #aaa;
 }
 
 .home > .hd > span {
@@ -147,12 +154,12 @@ h1 {
 .btn-goLogin {
 	display: flex;
 	position: fixed;
-	top: 20px;
-	right: 5%;
-	width: 60px;
+	top: 18px;
+	right: 6%;
+	width: 70px;
 	align-items: center;
 	justify-content: center;
-	height: 30px;
+	height: 35px;
 	margin-top: 2px;
 	margin-right: 2px;
 	padding-left: 20px;
@@ -189,19 +196,35 @@ h1 {
 
 .jumbotron {
 	margin-top: 20px;
+	height:350px;
+	background-color: rgba(	220,220,220 ,0.5);
+    background-size: 10px 10px;
+    background-image: linear-gradient(transparent 9px, #ffffff 9px,#ffffff 10px),linear-gradient(90deg, transparent 9px, #ffffff 9px,#ffffff 10px);
+    z-index: 80;
 }
 
 .jumbotron > p {
+	margin-top: 90px;
 	margin-bottom: 20px;
 }
+
 
 .features {
 	display: flex;
 	flex-direction: column;
 }
 
+.feature-item h2 {
+	font-weight:bold;
+
+	margin-bottom:50px;
+}
+
+#NodeJS_Img img {
+	height:200px;
+}
+
 .feature-item {
-	height: 250;
 	margin-bottom: 20px;
 }
 
