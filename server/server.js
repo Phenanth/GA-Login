@@ -22,9 +22,9 @@ app.listen(3000, function () {
 	console.log('Server running at port 3000...');
 });
 
-/*// Keep the db connection alive.
+// Keep the db connection alive.
 setInterval(function () {
 	db.query('SELECT 1');
-}, 30000);*/
+}, 30000);
 
 module.exports = app;

@@ -4,18 +4,85 @@
 ## 项目介绍
 
 登陆系统连接MySQL数据库，数据库中保存用户名和加盐Hash后的值。
-登陆后用户可以在用户设置中设置双因子认证，这里使用的是Google Authenticator
+登陆后用户可以在用户设置中设置双因子认证，这里使用的是Google Authenticator。
+
+### 依赖
+
+#### 安全
+
+- crypto （带盐加密）
+- speakeasy（双因子认证）
+- QRCode（二维码生成）
+
+#### 开发环境
+
+- Node.JS & Express（后端）
+- Vue.JS（前端）
+- Axios（前后端跨域）
+- Vue-Router（路由管理）
+- Vuex（状态管理）
+
+## 直观的演示
+
+由于是Web服务应用，我们把这个Web程序发布到了网站上，[点我在线验证](http://phenanthrene.top/#/GA-Login/home)
+
+需要注意为了网站一体性，发布版本的界面与开发版略有不同，但服务器的后台处理没有改变。
+
+## 如果要自己运行
+
+### 安装工具
+
+- MySQL
+- git
+- Node.JS & npm
+- Vue-cli
+
+### 准备工作
+
+1. 用MySQL新建数据库`login`，导入`/GA-Login/server/tables/login.sql`文件到`login`中
+2. 创建新用户`loginAdmin`，密码为`'000000'`，允许它对数据库`login`的所有操作。
+
+示例：
+```sql
+CREATE DATABASE login
+USE login
+source ../GA-Login/server/tables/login.sql # 填写`login.sql`所在绝对或者相对路径
+CREATE USER `loginAdmin`@`localhost` IDENTIFIED BY '000000';
+GRANT ALL ON login.* TO `loginAdmin`@`localhost` WITH GRANT OPTION;
+```
+
+### 框架运行
+
+1. 使用git命令行的工具克隆到本地
+`git clone https://github.com/Phenanth/GA-Login.git` 
+2. 在命令行中进入项目文件夹`/GA-Login`路径下
+3. 在命令行输入`npm install`，使用nodejs的包管理器npm下载依赖项
+4. 命令行输入：`npm run dev`开启开发环境，在浏览器地址栏输入`http://localhost:8099`并回车。
+5. 新建一个命令行窗口，进入`/GA-Login/server`目录，输入`node server.js`开启服务器
+
+示例：
+```bash
+git clone https://github.com/Phenanth/GA-Login.git
+cd GA-Login
+npm install
+npm run dev
+# (在一个新的命令行窗口中输入以下指令)
+cd (...所处路径)/GA-Login/server
+node server.js
+```
+
+> 这些操作做完之后应该就可以在自己的机器上进行带盐的注册登录与使用Google Authenticator进行双因子认证了。如果没有开发需求，只是想体验一下验证过程，推荐看上面直观演示部分。
 
 ## 人员分配
 
 - 宋奕
-	CSS设计
+	CSS设计、后端设计
 - 陈文菲
-	框架设计
+	前后端设计、项目管理
 - 贺文涵
-	数据库表设计
+	CSS设计、数据库表设计
 - 高志丹
-	文档书写
+	CSS设计、文档书写
 
 ## 项目进度
 
@@ -116,3 +183,12 @@ ALTER TABLE user ADD user_secret_temp varchar(40) DEFAULT NULL;
 ```
 
 如果需要对各个页面的CSS进行修改，可以把`/GA-Login/src/router/index.js`中对应页面的`beforeEnter`路由守护的部分注释掉，就可以在没有达成进入条件时进入该页面了。
+
+### 12.27 - CWF
+
+完成任务
+
+- 发布准备
+为了网站一体性，发布版本的界面与开发版略有不同，但服务器行为没有改变。
+
+> 中间因为发布的时候弄混了文件，`git reset --hard`了一下，回到了26号最后贺文涵上传的版本。
